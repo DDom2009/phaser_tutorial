@@ -30,20 +30,27 @@ var player;
 var stars
 var score = 0;
 var scoreText;
-
-function collectStar (play, star)
+var bomb
+function collectStar (player, star)
 {
-  star.disableBody(true, true);
+    star.disableBody(true, true);
 
-  score += 10;
-  scoreText.setText('score:' + score);
-}
+    score += 10;
+    scoreText.setText('Score: ' + score);
+
+    if (stars.countActive(true) === 0)
+    {
+        stars.children.iterate(function (child) {
+
+            child.enableBody(true, child.x, 0, true, true);
+  });
 function preload ()
 {
   this.load.image('dungeon' , 'assets/dungeon.png');
   this.load.image('platypus1' , 'assets/platypus1.png');
   this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
   this.load.image('star', '/assets/star.png')
+  this.load.image('bomb', 'assets/bomb.png');
 }
 
 
@@ -105,6 +112,8 @@ var scale= Phaser.Math.FloatBetween(0.1,.8)
  this.physics.add.overlap(player, stars, collectStar, null, this);
 
  scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#ffff00' });
+ this.physics.add.collider(bombs, platforms);
+ this.physics.add.collider(player, bombs, hitBomb, null, this);
 }
 
 function update ()
